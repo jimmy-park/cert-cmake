@@ -1,0 +1,8 @@
+#ifndef CERT_H_
+#define CERT_H_
+
+inline constexpr char kCert[] {
+@CERT@
+};
+
+#endif // CERT_H_
