@@ -57,13 +57,13 @@ if(CERT_INSTALL)
     install(
         EXPORT certTargets
         NAMESPACE cert::
-        DESTINATION ${CMAKE_INSTALL_DATADIR}/cmake
+        DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/cert
     )
     install(
         FILES
         ${CMAKE_CURRENT_SOURCE_DIR}/cmake/cert-config.cmake
         ${CMAKE_CURRENT_BINARY_DIR}/cert-config-version.cmake
-        DESTINATION ${CMAKE_INSTALL_DATADIR}/cmake
+        DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/cert
     )
 endif()
 
