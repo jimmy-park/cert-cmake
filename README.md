@@ -17,14 +17,14 @@ set(CERT_INSTALL ON) # default : OFF
 
 FetchContent_Declare(
     cert-cmake
-    URL https://github.com/jimmy-park/cert-cmake/archive/1.0.0.tar.gz
+    URL https://github.com/jimmy-park/cert-cmake/archive/main.tar.gz
 )
 FetchContent_MakeAvailable(cert-cmake)
 
 # If you're using CPM.cmake
 # CPMAddPackage(
 #     NAME cert-cmake
-#     URL https://github.com/jimmy-park/cert-cmake/archive/1.0.0.tar.gz
+#     URL https://github.com/jimmy-park/cert-cmake/archive/main.tar.gz
 #     OPTIONS
 #     "CERT_INSTALL ON"
 # )
