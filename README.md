@@ -1,5 +1,7 @@
 # cert-cmake
 
+[![CI](https://github.com/jimmy-park/cert-cmake/actions/workflows/ci.yaml/badge.svg)](https://github.com/jimmy-park/cert-cmake/actions/workflows/ci.yaml) [![Check](https://github.com/jimmy-park/cert-cmake/actions/workflows/check.yaml/badge.svg)](https://github.com/jimmy-park/cert-cmake/actions/workflows/check.yaml)
+
 Generate `cert.h` for loading in-memory cert
 
 Require C++17 due to `inline` variable
