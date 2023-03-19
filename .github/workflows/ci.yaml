@@ -1,0 +1,26 @@
+name: CI
+on:
+  push:
+    branches:
+      - main
+    tags-ignore:
+      - "**"
+    paths-ignore:
+      - "**/README.md"
+jobs:
+  build:
+    strategy:
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v3
+        
+      - name: Configure
+        run: cmake -S. -Bbuild -DCMAKE_INSTALL_PREFIX="${{ github.workspace }}/install" -DCERT_INSTALL=ON
+
+      - name: Build
+        run: cmake --build build
+
+      - name: Install
+        run: cmake --build build --target install
