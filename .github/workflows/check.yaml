@@ -1,15 +1,16 @@
 name: Check
 on:
-  schedule:
-    - cron: "0 0 * * *"
+  workflow_run:
+    workflows: [CI, CI for mobile devices]
+    types: [completed]
 jobs:
-  check:
+  on-success:
     runs-on: ubuntu-latest
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
     steps:
-      - name: Check the latest CA certificate
-        shell: cmake -P {0}
-        run: |
-          file(
-              DOWNLOAD https://curl.se/ca/cacert.pem ${CMAKE_CURRENT_BINARY_DIR}/cert.pem
-              EXPECTED_HASH SHA256=fb1ecd641d0a02c01bc9036d513cb658bbda62a75e246bedbc01764560a639f0
-          )
+      - run: echo 'The triggering workflow passed'
+  on-failure:
+    runs-on: ubuntu-latest
+    if: ${{ github.event.workflow_run.conclusion == 'failure' }}
+    steps:
+      - run: echo 'The triggering workflow failed'

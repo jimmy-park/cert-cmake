@@ -1,0 +1,15 @@
+name: Latest
+on:
+  schedule:
+    - cron: "0 0 * * *"
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check the latest CA certificate
+        shell: cmake -P {0}
+        run: |
+          file(
+              DOWNLOAD https://curl.se/ca/cacert.pem ${CMAKE_CURRENT_BINARY_DIR}/cert.pem
+              EXPECTED_HASH SHA256=fb1ecd641d0a02c01bc9036d513cb658bbda62a75e246bedbc01764560a639f0
+          )

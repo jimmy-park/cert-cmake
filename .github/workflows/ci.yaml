@@ -2,11 +2,16 @@ name: CI
 on:
   push:
     branches:
-      - main
-    tags-ignore:
       - "**"
     paths-ignore:
-      - "**/README.md"
+      - "**.md"
+    tags-ignore:
+      - "**"
+  pull_request:
+    branches:
+      - "**"
+    paths-ignore:
+      - "**.md"
 jobs:
   build:
     strategy:
@@ -15,7 +20,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v3
-        
+
       - name: Configure
         run: cmake -S. -Bbuild -DCMAKE_INSTALL_PREFIX="${{ github.workspace }}/install" -DCERT_INSTALL=ON
 
