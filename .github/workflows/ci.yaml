@@ -1,17 +1,10 @@
 name: CI
 on:
   push:
-    branches:
-      - "**"
-    paths-ignore:
-      - "**.md"
-    tags-ignore:
-      - "**"
+    branches: ["**"]
+    tags-ignore: ["**"]
   pull_request:
-    branches:
-      - "**"
-    paths-ignore:
-      - "**.md"
+    branches: ["**"]
 jobs:
   build:
     strategy:
@@ -21,6 +14,10 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
+      - name: Find OpenSSL
+        if: runner.os == 'macOS'
+        run: echo "OPENSSL_ROOT_DIR=$(brew --prefix openssl)" >> $GITHUB_ENV
+
       - name: Configure
         run: cmake -S. -Bbuild -DCMAKE_INSTALL_PREFIX="${{ github.workspace }}/install" -DCERT_INSTALL=ON
 
@@ -29,3 +26,12 @@ jobs:
 
       - name: Install
         run: cmake --build build --target install
+  analyze:
+    runs-on: ubuntu-latest
+    permissions:
+      security-events: write
+    steps:
+      - uses: actions/checkout@v3
+      - uses: github/codeql-action/init@v2
+      - uses: github/codeql-action/autobuild@v2
+      - uses: github/codeql-action/analyze@v2
