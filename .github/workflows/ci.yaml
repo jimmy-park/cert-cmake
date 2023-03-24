@@ -9,29 +9,42 @@ jobs:
   build:
     strategy:
       matrix:
-        os: [ubuntu-latest, macos-latest, windows-latest]
+        preset: [linux-clang, linux-gcc, macos, windows]
+        config: [Debug, Release]
+        include:
+          - preset: linux-clang
+            os: ubuntu-latest
+          - preset: linux-gcc
+            os: ubuntu-latest
+          - preset: macos
+            os: macos-latest
+          - preset: windows
+            os: windows-latest
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v3
 
-      - name: Find OpenSSL
+      - name: Install dependencies on Linux
+        if: runner.os == 'Linux'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y ninja-build
+      - name: Install dependencies on Windows
+        if: runner.os == 'Windows'
+        run: choco install -y openssl
+
+      - name: Find OpenSSL on macOS
         if: runner.os == 'macOS'
         run: echo "OPENSSL_ROOT_DIR=$(brew --prefix openssl)" >> $GITHUB_ENV
 
-      - name: Configure
-        run: cmake -S. -Bbuild -DCMAKE_INSTALL_PREFIX="${{ github.workspace }}/install" -DCERT_INSTALL=ON
+      - name: Configure CMake
+        run: cmake --preset ${{ matrix.preset }}
 
       - name: Build
-        run: cmake --build build
+        run: cmake --build --preset ${{ matrix.preset }} --config ${{ matrix.config }}
+
+      - name: Test
+        run: ctest --preset ${{ matrix.preset }} -C ${{ matrix.config }}
 
       - name: Install
-        run: cmake --build build --target install
-  analyze:
-    runs-on: ubuntu-latest
-    permissions:
-      security-events: write
-    steps:
-      - uses: actions/checkout@v3
-      - uses: github/codeql-action/init@v2
-      - uses: github/codeql-action/autobuild@v2
-      - uses: github/codeql-action/analyze@v2
+        run: cmake --build --preset ${{ matrix.preset }}-install --config ${{ matrix.config }}

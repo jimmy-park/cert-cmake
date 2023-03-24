@@ -4,7 +4,7 @@
 
 int main()
 {
-    auto* ctx = SSL_CTX_new(TLSv1_2_method());
+    auto* ctx = SSL_CTX_new(TLS_method());
 
     LoadCert(ctx);
 

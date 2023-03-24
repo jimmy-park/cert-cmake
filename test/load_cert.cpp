@@ -4,6 +4,7 @@
 #include <vector>
 
 #include <cert.h>
+#include <openssl/crypto.h>
 #include <openssl/ssl.h>
 
 void LoadCert(void* ssl_context)
@@ -31,15 +32,15 @@ void LoadCert(void* ssl_context)
     };
 
     static const auto certs = [] {
-        std::vector<X509*> certs;
+        std::vector<X509*> x509s;
 
         for (int first = 0, last = sk_X509_INFO_num(x509_ptr.get()); first < last; ++first) {
             auto* value = sk_X509_INFO_value(x509_ptr.get(), first);
             if (value && value->x509)
-                certs.push_back(value->x509);
+                x509s.push_back(value->x509);
         }
 
-        return certs;
+        return x509s;
     }();
 
     if (!ssl_context)
@@ -49,4 +50,7 @@ void LoadCert(void* ssl_context)
 
     for (const auto x509 : certs)
         X509_STORE_add_cert(x509_store, x509);
+
+    // https://www.openssl.org/docs/manmaster/man3/OPENSSL_thread_stop.html
+    OPENSSL_thread_stop();
 }

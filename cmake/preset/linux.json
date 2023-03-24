@@ -1,0 +1,92 @@
+{
+    "version": 4,
+    "include": [
+        "base.json"
+    ],
+    "configurePresets": [
+        {
+            "name": "linux-clang",
+            "inherits": [
+                "host-linux",
+                "ninja",
+                "clang",
+                "default"
+            ]
+        },
+        {
+            "name": "linux-gcc",
+            "inherits": [
+                "host-linux",
+                "ninja",
+                "gcc",
+                "default"
+            ]
+        }
+    ],
+    "buildPresets": [
+        {
+            "name": "linux-clang",
+            "configurePreset": "linux-clang",
+            "inherits": [
+                "host-linux"
+            ]
+        },
+        {
+            "name": "linux-clang-clean",
+            "configurePreset": "linux-clang",
+            "inherits": [
+                "host-linux",
+                "clean"
+            ]
+        },
+        {
+            "name": "linux-clang-install",
+            "configurePreset": "linux-clang",
+            "inherits": [
+                "host-linux",
+                "install"
+            ]
+        },
+        {
+            "name": "linux-gcc",
+            "configurePreset": "linux-gcc",
+            "inherits": [
+                "host-linux"
+            ]
+        },
+        {
+            "name": "linux-gcc-clean",
+            "configurePreset": "linux-gcc",
+            "inherits": [
+                "host-linux",
+                "clean"
+            ]
+        },
+        {
+            "name": "linux-gcc-install",
+            "configurePreset": "linux-gcc",
+            "inherits": [
+                "host-linux",
+                "install"
+            ]
+        }
+    ],
+    "testPresets": [
+        {
+            "name": "linux-clang",
+            "configurePreset": "linux-clang",
+            "inherits": [
+                "host-linux",
+                "options"
+            ]
+        },
+        {
+            "name": "linux-gcc",
+            "configurePreset": "linux-gcc",
+            "inherits": [
+                "host-linux",
+                "options"
+            ]
+        }
+    ]
+}
