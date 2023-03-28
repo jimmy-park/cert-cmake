@@ -1,7 +1,9 @@
 name: Latest
+
 on:
   schedule:
     - cron: "0 0 * * *"
+
 jobs:
   check:
     runs-on: ubuntu-latest

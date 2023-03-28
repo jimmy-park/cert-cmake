@@ -1,13 +1,11 @@
 name: CI
-on:
-  push:
-    branches: ["**"]
-    tags-ignore: ["**"]
-  pull_request:
-    branches: ["**"]
+
+on: [push, pull_request]
+
 jobs:
   build:
     strategy:
+      fail-fast: false
       matrix:
         preset: [linux-clang, linux-gcc, macos, windows]
         config: [Debug, Release]
