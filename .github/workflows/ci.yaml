@@ -10,14 +10,10 @@ jobs:
         preset: [linux-clang, linux-gcc, macos, windows]
         config: [Debug, Release]
         include:
-          - preset: linux-clang
-            os: ubuntu-latest
-          - preset: linux-gcc
-            os: ubuntu-latest
-          - preset: macos
-            os: macos-latest
-          - preset: windows
-            os: windows-latest
+          - { os: macos-latest, preset: macos }
+          - { os: ubuntu-latest, preset: linux-clang }
+          - { os: ubuntu-latest, preset: linux-gcc }
+          - { os: windows-latest, preset: windows }
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v3
@@ -32,7 +28,7 @@ jobs:
         if: runner.os == 'macOS'
         run: echo "OPENSSL_ROOT_DIR=$(brew --prefix openssl)" >> $GITHUB_ENV
 
-      - name: Configure CMake
+      - name: Configure
         run: cmake --preset ${{ matrix.preset }}
 
       - name: Build
@@ -42,4 +38,4 @@ jobs:
         run: ctest --preset ${{ matrix.preset }} -C ${{ matrix.config }}
 
       - name: Install
-        run: cmake --build --preset ${{ matrix.preset }}-install --config ${{ matrix.config }}
+        run: cmake --build --preset ${{ matrix.preset }} --config ${{ matrix.config }} -t install

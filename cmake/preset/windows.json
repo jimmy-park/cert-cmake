@@ -8,6 +8,7 @@
             "name": "windows",
             "inherits": [
                 "host-windows",
+                "target-windows",
                 "vs2022",
                 "default"
             ]
@@ -19,22 +20,6 @@
             "configurePreset": "windows",
             "inherits": [
                 "host-windows"
-            ]
-        },
-        {
-            "name": "windows-clean",
-            "configurePreset": "windows",
-            "inherits": [
-                "host-windows",
-                "clean"
-            ]
-        },
-        {
-            "name": "windows-install",
-            "configurePreset": "windows",
-            "inherits": [
-                "host-windows",
-                "install"
             ]
         }
     ],
