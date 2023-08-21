@@ -8,17 +8,30 @@ Generate `cert.h` for loading in-memory cert
 
 Require C++17 due to `inline` variable
 
+## CMake Options
+
+| Option         | Default | Description                        |
+| ---            | ---     | ---                                |
+| `CERT_INSTALL` | `OFF`   | Install `cert.h` and CMake targets |
+
 ## Usage
 
-### CMake Integration
+### Build
 
-Require CMake 3.23+ due to `target_sources(FILE_SET)`
+```sh
+cmake --list-presets all                    # List all CMake presets
+cmake --preset windows                      # Configure
+cmake --build --preset windows              # Build
+ctest --preset windows                      # Test
+cmake --build --preset windows -t install   # Install
+```
+
+### Integration
+
+Require CMake 3.23+
 
 ```CMake
 include(FetchContent)
-
-set(CERT_INSTALL ON) # default : OFF
-
 FetchContent_Declare(
     cert-cmake
     URL https://github.com/jimmy-park/cert-cmake/archive/main.tar.gz
@@ -29,15 +42,39 @@ FetchContent_MakeAvailable(cert-cmake)
 # CPMAddPackage(
 #     NAME cert-cmake
 #     URL https://github.com/jimmy-park/cert-cmake/archive/main.tar.gz
-#     OPTIONS
-#     "CERT_INSTALL ON"
 # )
 
 add_executable(main main.cpp)
 target_link_libraries(main PRIVATE cert::cert)
 ```
 
-### Example
+## Example
+
+### curl
+
+```cpp
+#include <cert.h>
+#include <curl/curl.h>
+
+int main()
+{
+    static constexpr auto blob = curl_blob {
+        const_cast<char*>(kCert),
+        sizeof(kCert),
+        CURL_BLOB_COPY
+    };
+
+    auto* curl = curl_easy_init();
+    curl_easy_setopt(curl, CURLOPT_CAINFO_BLOB, &blob);
+    curl_easy_setopt(curl, CURLOPT_URL, "https://nghttp2.org/httpbin/get");
+    curl_easy_perform(curl);
+    curl_easy_cleanup(curl);
+
+    return 0;
+}
+```
+
+### OpenSSL
 
 ```cpp
 #include <memory>
