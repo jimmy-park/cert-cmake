@@ -1,7 +1,6 @@
 # cert-cmake
 
 [![CI](https://github.com/jimmy-park/cert-cmake/actions/workflows/ci.yaml/badge.svg)](https://github.com/jimmy-park/cert-cmake/actions/workflows/ci.yaml)
-[![CodeQL](https://github.com/jimmy-park/cert-cmake/actions/workflows/codeql.yaml/badge.svg)](https://github.com/jimmy-park/cert-cmake/actions/workflows/codeql.yaml)
 [![Latest](https://github.com/jimmy-park/cert-cmake/actions/workflows/latest.yaml/badge.svg)](https://github.com/jimmy-park/cert-cmake/actions/workflows/latest.yaml)
 
 Generate `cert.h` for loading in-memory cert
@@ -11,7 +10,7 @@ Require C++17 due to `inline` variable
 ## CMake Options
 
 | Option         | Default | Description                        |
-| ---            | ---     | ---                                |
+| -------------- | ------- | ---------------------------------- |
 | `CERT_INSTALL` | `OFF`   | Install `cert.h` and CMake targets |
 
 ## Usage
