@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.23)
 
 project(
     cert-cmake
-    VERSION 1.2.2
+    VERSION 1.2.3
     DESCRIPTION "Generate cert.h for loading in-memory cert"
     HOMEPAGE_URL "https://github.com/jimmy-park/cert-cmake"
     LANGUAGES CXX
