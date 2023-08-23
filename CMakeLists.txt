@@ -13,8 +13,8 @@ option(CERT_INSTALL "Install cert.h and CMake targets" OFF)
 
 # Download extracted CA certs from curl
 file(
-    DOWNLOAD https://curl.se/ca/cacert-2023-05-30.pem ${CMAKE_CURRENT_BINARY_DIR}/cert.pem
-    EXPECTED_HASH SHA256=5fadcae90aa4ae041150f8e2d26c37d980522cdb49f923fc1e1b5eb8d74e71ad
+    DOWNLOAD https://curl.se/ca/cacert-2023-08-22.pem ${CMAKE_CURRENT_BINARY_DIR}/cert.pem
+    EXPECTED_HASH SHA256=23c2469e2a568362a62eecf1b49ed90a15621e6fa30e29947ded3436422de9b9
 )
 
 # Generate cert.h
