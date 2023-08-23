@@ -52,37 +52,22 @@ target_link_libraries(main PRIVATE cert::cert)
 ### curl
 
 ```cpp
-#include <cert.h>
-#include <curl/curl.h>
+static constexpr auto blob = curl_blob {
+    const_cast<char*>(kCert),
+    sizeof(kCert),
+    CURL_BLOB_COPY
+};
 
-int main()
-{
-    static constexpr auto blob = curl_blob {
-        const_cast<char*>(kCert),
-        sizeof(kCert),
-        CURL_BLOB_COPY
-    };
-
-    auto* curl = curl_easy_init();
-    curl_easy_setopt(curl, CURLOPT_CAINFO_BLOB, &blob);
-    curl_easy_setopt(curl, CURLOPT_URL, "https://nghttp2.org/httpbin/get");
-    curl_easy_perform(curl);
-    curl_easy_cleanup(curl);
-
-    return 0;
-}
+auto* curl = curl_easy_init();
+curl_easy_setopt(curl, CURLOPT_CAINFO_BLOB, &blob);
+curl_easy_setopt(curl, CURLOPT_URL, "https://nghttp2.org/httpbin/get");
+curl_easy_perform(curl);
+curl_easy_cleanup(curl);
 ```
 
 ### OpenSSL
 
 ```cpp
-#include <memory>
-#include <vector>
-
-#include <cert.h>
-#include <openssl/crypto.h>
-#include <openssl/ssl.h>
-
 void LoadCert(void* ssl_context)
 {
     using ST_X509_INFO = STACK_OF(X509_INFO);
@@ -130,4 +115,19 @@ void LoadCert(void* ssl_context)
     // https://www.openssl.org/docs/manmaster/man3/OPENSSL_thread_stop.html
     OPENSSL_thread_stop();
 }
+```
+
+### curl + OpenSSL
+
+```cpp
+auto ssl_callback = +[](CURL*, void* ssl_ctx, void*) {
+    LoadCert(ssl_ctx);
+    return CURLE_OK;
+};
+
+auto* curl = curl_easy_init();
+curl_easy_setopt(curl, CURLOPT_SSL_CTX_FUNCTION, ssl_callback);
+curl_easy_setopt(curl, CURLOPT_URL, "https://nghttp2.org/httpbin/get");
+curl_easy_perform(curl);
+curl_easy_cleanup(curl);
 ```

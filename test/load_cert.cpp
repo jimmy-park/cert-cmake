@@ -7,7 +7,7 @@
 #include <openssl/crypto.h>
 #include <openssl/ssl.h>
 
-void LoadCert(void* ssl_context)
+bool LoadCert(void* ssl_context)
 {
     using ST_X509_INFO = STACK_OF(X509_INFO);
 
@@ -36,21 +36,41 @@ void LoadCert(void* ssl_context)
 
         for (int first = 0, last = sk_X509_INFO_num(x509_ptr.get()); first < last; ++first) {
             auto* value = sk_X509_INFO_value(x509_ptr.get(), first);
-            if (value && value->x509)
+            if (value && value->x509) {
                 x509s.push_back(value->x509);
+            } else {
+                x509s.clear();
+                break;
+            }
         }
 
         return x509s;
     }();
 
-    if (!ssl_context)
-        return;
+    const auto success = [&] {
+        if (!x509_ptr)
+            return false;
 
-    auto* x509_store = SSL_CTX_get_cert_store(static_cast<SSL_CTX*>(ssl_context));
+        if (certs.empty())
+            return false;
 
-    for (const auto x509 : certs)
-        X509_STORE_add_cert(x509_store, x509);
+        if (!ssl_context)
+            return false;
+
+        auto* x509_store = SSL_CTX_get_cert_store(static_cast<SSL_CTX*>(ssl_context));
+        if (!x509_store)
+            return false;
+
+        for (const auto x509 : certs) {
+            if (X509_STORE_add_cert(x509_store, x509) != 1)
+                return false;
+        }
+
+        return true;
+    }();
 
     // https://www.openssl.org/docs/manmaster/man3/OPENSSL_thread_stop.html
     OPENSSL_thread_stop();
+
+    return success;
 }
