@@ -68,29 +68,32 @@ curl_easy_cleanup(curl);
 ### OpenSSL
 
 ```cpp
+template <auto func>
+struct Deleter {
+    template <typename T>
+    constexpr void operator()(T* ptr) const
+    {
+        func(ptr);
+    }
+};
+
+using X509Info = STACK_OF(X509_INFO);
+void FreeX509Info(X509Info* ptr) { sk_X509_INFO_pop_free(ptr, X509_INFO_free); }
+using X509Ptr = std::unique_ptr<X509Info, Deleter<FreeX509Info>>;
+using BioPtr = std::unique_ptr<BIO, Deleter<BIO_free_all>>;
+
 void LoadCert(void* ssl_context)
 {
-    using ST_X509_INFO = STACK_OF(X509_INFO);
-
-    static constexpr auto x509_deleter = [](ST_X509_INFO* ptr) {
-        if (ptr)
-            sk_X509_INFO_pop_free(ptr, X509_INFO_free);
+    // https://www.openssl.org/docs/manmaster/man3/OPENSSL_thread_stop.html
+    struct OpenSSLCleaner {
+        ~OpenSSLCleaner() { OPENSSL_thread_stop(); }
     };
-
-    using X509Ptr = std::unique_ptr<ST_X509_INFO, decltype(x509_deleter)>;
-
-    static const auto x509_ptr {
-        []() -> X509Ptr {
-            ST_X509_INFO* ptr { nullptr };
-
-            if (BIO* mem = BIO_new_mem_buf(kCert, sizeof(kCert)); mem) {
-                ptr = PEM_X509_INFO_read_bio(mem, nullptr, nullptr, nullptr);
-                BIO_free_all(mem);
-            }
-
-            return { ptr, x509_deleter };
-        }()
-    };
+    thread_local const OpenSSLCleaner openssl_clenaer;
+    
+    static const auto x509_ptr = [] {
+        const auto bio_ptr = BioPtr { BIO_new_mem_buf(kCert, sizeof(kCert)) };
+        return X509Ptr { PEM_X509_INFO_read_bio(bio_ptr.get(), nullptr, nullptr, nullptr) };
+    }();
 
     static const auto certs = [] {
         std::vector<X509*> x509s;
@@ -111,9 +114,6 @@ void LoadCert(void* ssl_context)
 
     for (const auto x509 : certs)
         X509_STORE_add_cert(x509_store, x509);
-
-    // https://www.openssl.org/docs/manmaster/man3/OPENSSL_thread_stop.html
-    OPENSSL_thread_stop();
 }
 ```
 
