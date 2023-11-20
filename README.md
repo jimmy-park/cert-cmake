@@ -9,9 +9,13 @@ Require C++17 due to `inline` variable
 
 ## CMake Options
 
-| Option         | Default | Description                        |
-| -------------- | ------- | ---------------------------------- |
-| `CERT_INSTALL` | `OFF`   | Install `cert.h` and CMake targets |
+| Option              | Default       | Description                        |
+| ------------------- | ------------- | ---------------------------------- |
+| `CERT_DOWNLOAD_URL` | `(undefined)` | Download a PEM file from URL       |
+| `CERT_INSTALL`      | `OFF`         | Install `cert.h` and CMake targets |
+
+- `CERT_DOWNLOAD_URL`
+  - When this isn't defined, download the latest CA bundle maintained by [curl](https://curl.se/docs/caextract.html)
 
 ## Usage
 
