@@ -14,10 +14,7 @@ namespace detail {
 template <auto func>
 struct Deleter {
     template <typename T>
-    constexpr void operator()(T* ptr) const
-    {
-        func(ptr);
-    }
+    constexpr void operator()(T* ptr) const { func(ptr); }
 };
 
 static void FreeX509Info(X509Info* ptr) { sk_X509_INFO_pop_free(ptr, X509_INFO_free); }
@@ -28,6 +25,9 @@ using BioPtr = std::unique_ptr<BIO, Deleter<BIO_free_all>>;
 
 bool LoadCert(void* ssl_context)
 {
+    if (!ssl_context)
+        return false;
+
     // https://www.openssl.org/docs/manmaster/man3/OPENSSL_thread_stop.html
     struct OpenSSLCleaner {
         ~OpenSSLCleaner() { OPENSSL_thread_stop(); }
@@ -38,6 +38,9 @@ bool LoadCert(void* ssl_context)
         const auto bio_ptr = detail::BioPtr { BIO_new_mem_buf(kCert, sizeof(kCert)) };
         return detail::X509Ptr { PEM_X509_INFO_read_bio(bio_ptr.get(), nullptr, nullptr, nullptr) };
     }();
+
+    if (!x509_ptr)
+        return false;
 
     static const auto certs = [] {
         std::vector<X509*> x509s;
@@ -55,27 +58,17 @@ bool LoadCert(void* ssl_context)
         return x509s;
     }();
 
-    const auto success = [&] {
-        if (!x509_ptr)
+    if (certs.empty())
+        return false;
+
+    auto* x509_store = SSL_CTX_get_cert_store(static_cast<SSL_CTX*>(ssl_context));
+    if (!x509_store)
+        return false;
+
+    for (const auto x509 : certs) {
+        if (X509_STORE_add_cert(x509_store, x509) != 1)
             return false;
+    }
 
-        if (certs.empty())
-            return false;
-
-        if (!ssl_context)
-            return false;
-
-        auto* x509_store = SSL_CTX_get_cert_store(static_cast<SSL_CTX*>(ssl_context));
-        if (!x509_store)
-            return false;
-
-        for (const auto x509 : certs) {
-            if (X509_STORE_add_cert(x509_store, x509) != 1)
-                return false;
-        }
-
-        return true;
-    }();
-
-    return success;
+    return true;
 }

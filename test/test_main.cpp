@@ -19,7 +19,7 @@ int main()
     static constexpr auto blob = curl_blob {
         const_cast<char*>(kCert),
         sizeof(kCert),
-        CURL_BLOB_COPY
+        CURL_BLOB_NOCOPY
     };
 
     long response_code = 0;

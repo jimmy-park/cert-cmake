@@ -59,7 +59,7 @@ target_link_libraries(main PRIVATE cert::cert)
 static constexpr auto blob = curl_blob {
     const_cast<char*>(kCert),
     sizeof(kCert),
-    CURL_BLOB_COPY
+    CURL_BLOB_NOCOPY
 };
 
 auto* curl = curl_easy_init();
@@ -75,10 +75,7 @@ curl_easy_cleanup(curl);
 template <auto func>
 struct Deleter {
     template <typename T>
-    constexpr void operator()(T* ptr) const
-    {
-        func(ptr);
-    }
+    constexpr void operator()(T* ptr) const { func(ptr); }
 };
 
 using X509Info = STACK_OF(X509_INFO);
