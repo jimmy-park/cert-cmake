@@ -18,7 +18,7 @@ set(HTTP_ONLY ON)
 
 FetchContent_Declare(
     curl
-    URL https://github.com/curl/curl/archive/curl-8_2_1.tar.gz
+    URL https://github.com/curl/curl/archive/master.tar.gz
 )
 FetchContent_GetProperties(curl)
 
@@ -27,12 +27,12 @@ if(NOT curl_POPULATED)
     add_subdirectory(${curl_SOURCE_DIR} ${curl_BINARY_DIR} EXCLUDE_FROM_ALL)
 endif()
 
-add_executable(main
+add_executable(test_cert
     load_cert.cpp
     load_cert.h
     test_main.cpp
 )
-target_link_libraries(main PRIVATE
+target_link_libraries(test_cert PRIVATE
     cert::cert
     CURL::libcurl
     OpenSSL::Crypto
@@ -40,9 +40,9 @@ target_link_libraries(main PRIVATE
 )
 
 if(CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
-    target_compile_options(main PRIVATE /WX /W4 /permissive-)
+    target_compile_options(test_cert PRIVATE /WX /W4 /permissive-)
 else()
-    target_compile_options(main PRIVATE
+    target_compile_options(test_cert PRIVATE
         -Werror -Wall -Wextra -pedantic
 
         # Disable specific warnings
@@ -50,4 +50,4 @@ else()
     )
 endif()
 
-add_test(test_main main)
+add_test(test_cert test_cert)

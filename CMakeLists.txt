@@ -8,22 +8,21 @@ project(
     LANGUAGES CXX
 )
 
-# Custom options
 option(CERT_INSTALL "Install cert.h and CMake targets" OFF)
 
-if(DEFINED CERT_DOWNLOAD_URL)
+if("${CERT_DOWNLOAD_URL}" STREQUAL "")
+    # Download the latest CA bundle maintained by curl
+    file(
+        DOWNLOAD https://curl.se/ca/cacert-2023-08-22.pem ${CMAKE_CURRENT_BINARY_DIR}/cert.pem
+        EXPECTED_HASH SHA256=23c2469e2a568362a62eecf1b49ed90a15621e6fa30e29947ded3436422de9b9
+    )
+else()
     file(DOWNLOAD ${CERT_DOWNLOAD_URL} ${CMAKE_CURRENT_BINARY_DIR}/cert.pem)
     file(SIZE ${CMAKE_CURRENT_BINARY_DIR}/cert.pem CERT_DOWNLOAD_SIZE)
 
     if(CERT_DOWNLOAD_SIZE EQUAL 0)
         message(FATAL_ERROR "Failed to download from ${CERT_DOWNLOAD_URL}")
     endif()
-else()
-    # Download the latest CA bundle maintained by curl
-    file(
-        DOWNLOAD https://curl.se/ca/cacert-2023-08-22.pem ${CMAKE_CURRENT_BINARY_DIR}/cert.pem
-        EXPECTED_HASH SHA256=23c2469e2a568362a62eecf1b49ed90a15621e6fa30e29947ded3436422de9b9
-    )
 endif()
 
 # Generate cert.h
