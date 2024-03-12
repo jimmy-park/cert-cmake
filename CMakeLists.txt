@@ -13,8 +13,8 @@ option(CERT_INSTALL "Install cert.h and CMake targets" OFF)
 if("${CERT_DOWNLOAD_URL}" STREQUAL "")
     # Download the latest CA bundle maintained by curl
     file(
-        DOWNLOAD https://curl.se/ca/cacert-2023-12-12.pem ${CMAKE_CURRENT_BINARY_DIR}/cert.pem
-        EXPECTED_HASH SHA256=ccbdfc2fe1a0d7bbbb9cc15710271acf1bb1afe4c8f1725fe95c4c7733fcbe5a
+        DOWNLOAD https://curl.se/ca/cacert-2024-03-11.pem ${CMAKE_CURRENT_BINARY_DIR}/cert.pem
+        EXPECTED_HASH SHA256=1794c1d4f7055b7d02c2170337b61b48a2ef6c90d77e95444fd2596f4cac609f
     )
 else()
     file(DOWNLOAD ${CERT_DOWNLOAD_URL} ${CMAKE_CURRENT_BINARY_DIR}/cert.pem)
