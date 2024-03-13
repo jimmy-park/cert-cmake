@@ -10,19 +10,23 @@ project(
 
 option(CERT_INSTALL "Install cert.h and CMake targets" OFF)
 
-if("${CERT_DOWNLOAD_URL}" STREQUAL "")
+if("${CERT_SOURCE}" MATCHES "^http")
+    # Download CA certificates from internet
+    file(DOWNLOAD ${CERT_SOURCE} ${CMAKE_CURRENT_BINARY_DIR}/cert.pem)
+    file(SIZE ${CMAKE_CURRENT_BINARY_DIR}/cert.pem CERT_DOWNLOAD_SIZE)
+
+    if(CERT_DOWNLOAD_SIZE EQUAL 0)
+        message(FATAL_ERROR "Failed to download from ${CERT_SOURCE}")
+    endif()
+elseif(EXISTS "${CERT_SOURCE}" AND IS_ABSOLUTE "${CERT_SOURCE}" AND NOT IS_DIRECTORY "${CERT_SOURCE}")
+    # Copy the local PEM file
+    file(COPY_FILE "${CERT_SOURCE}" ${CMAKE_CURRENT_BINARY_DIR}/cert.pem ONLY_IF_DIFFERENT)
+else()
     # Download the latest CA bundle maintained by curl
     file(
         DOWNLOAD https://curl.se/ca/cacert-2024-03-11.pem ${CMAKE_CURRENT_BINARY_DIR}/cert.pem
         EXPECTED_HASH SHA256=1794c1d4f7055b7d02c2170337b61b48a2ef6c90d77e95444fd2596f4cac609f
     )
-else()
-    file(DOWNLOAD ${CERT_DOWNLOAD_URL} ${CMAKE_CURRENT_BINARY_DIR}/cert.pem)
-    file(SIZE ${CMAKE_CURRENT_BINARY_DIR}/cert.pem CERT_DOWNLOAD_SIZE)
-
-    if(CERT_DOWNLOAD_SIZE EQUAL 0)
-        message(FATAL_ERROR "Failed to download from ${CERT_DOWNLOAD_URL}")
-    endif()
 endif()
 
 # Generate cert.h
