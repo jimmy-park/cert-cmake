@@ -9,13 +9,16 @@ Require C++17 due to `inline` variable
 
 ## CMake Options
 
-| Option              | Default       | Description                        |
-| ------------------- | ------------- | ---------------------------------- |
-| `CERT_DOWNLOAD_URL` | `(undefined)` | Download a PEM file from URL       |
-| `CERT_INSTALL`      | `OFF`         | Install `cert.h` and CMake targets |
+| Option         | Default       | Description                                             |
+| -------------- | ------------- | ------------------------------------------------------- |
+| `CERT_SOURCE`  | `(undefined)` | Specify the location of certificates (URL or file path) |
+| `CERT_INSTALL` | `OFF`         | Install `cert.h` and CMake targets                      |
 
-- `CERT_DOWNLOAD_URL`
+- `CERT_SOURCE`
   - When this isn't defined, download the latest CA bundle maintained by [curl](https://curl.se/docs/caextract.html)
+
+> [!NOTE]
+> If you want to use a local PEM file, `CERT_SOURCE` must be an absolute path.
 
 ## Usage
 
