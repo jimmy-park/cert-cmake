@@ -15,6 +15,7 @@ set(CURL_CA_PATH none CACHE STRING "" FORCE)
 set(CURL_DISABLE_TESTS ON)
 set(CURL_USE_OPENSSL ON)
 set(HTTP_ONLY ON)
+set(USE_LIBIDN2 OFF)
 
 FetchContent_Declare(
     curl
