@@ -24,8 +24,8 @@ elseif(EXISTS "${CERT_SOURCE}" AND IS_ABSOLUTE "${CERT_SOURCE}" AND NOT IS_DIREC
 else()
     # Download the latest CA bundle maintained by curl
     file(
-        DOWNLOAD https://curl.se/ca/cacert-2024-12-31.pem ${CMAKE_CURRENT_BINARY_DIR}/cert.pem
-        EXPECTED_HASH SHA256=a3f328c21e39ddd1f2be1cea43ac0dec819eaa20a90425d7da901a11531b3aa5
+        DOWNLOAD https://curl.se/ca/cacert-2025-02-25.pem ${CMAKE_CURRENT_BINARY_DIR}/cert.pem
+        EXPECTED_HASH SHA256=50a6277ec69113f00c5fd45f09e8b97a4b3e32daa35d3a95ab30137a55386cef
     )
 endif()
 
